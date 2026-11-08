@@ -1,0 +1,30 @@
+[project]
+name = "shiori"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "ShupoShupo Shrimp", email = "markivans2525@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=2.6.0",
+    "httpx>=0.28.1",
+    "openai>=3.46.0",
+    "pydantic>=2.14.3",
+]
+
+[project.scripts]
+shiori = "shiori:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.1",
+    "pytest>=9.2.0",
+    "respx>=0.23.1",
+    "ruff>=0.17.4",
+]
