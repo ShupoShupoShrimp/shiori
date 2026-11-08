@@ -1,0 +1,35 @@
+name: Mermaid check
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    checks:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Getting the repository data
+              uses: actions/checkout@v4
+
+            - name: Installing uv
+              uses: astral-sh/setup-uv@v5
+              with:
+                  enable-caches: true
+                  cache-dependency-glob: |
+                      **/uv.lock
+                  python-version: "3.12"
+
+            - name: Copying dependencies
+              run: uv sync --locked
+
+            - name: Running ruff check
+              run: uv run ruff check .
+
+            - name: Running ruff formatter
+              run: uv run ruff format . --check
+
+            - name: Running mypy strict
+              run: uv run mypy . --strict
