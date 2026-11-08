@@ -1,0 +1,275 @@
+# =============================================================================
+# Shiori .gitignore
+# Stack: Python / FastAPI / Postgres+pgvector / Redis / Docker / GitHub Actions
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+# 1. SECRETS AND CREDENTIALS (never commit; most important section)
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.jks
+id_rsa*
+id_ed25519*
+cosign.key
+secrets/
+.secrets/
+credentials.json
+service-account*.json
+*.token
+.netrc
+.pypirc
+.npmrc
+# Local-only config overrides
+*.local
+config.local.*
+settings.local.*
+# Local compose overrides often hold ports and keys
+docker-compose.override.yml
+compose.override.yml
+
+
+# -----------------------------------------------------------------------------
+# 2. PYTHON
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+/env/
+/ENV/
+
+# Packaging and build output
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+wheels/
+pip-wheel-metadata/
+.installed.cfg
+
+# Test, lint, type-check caches
+.pytest_cache/
+.hypothesis/
+.mypy_cache/
+.pyright/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.cache/
+
+.ipynb_checkpoints/
+
+# -----------------------------------------------------------------------------
+# 3. INGESTED DATA AND SNAPSHOTS (large, regenerable, license-sensitive)
+# -----------------------------------------------------------------------------
+/data/raw/*
+!/data/raw/.gitkeep
+/data/snapshots/*
+!/data/snapshots/.gitkeep
+/data/processed/*
+!/data/processed/.gitkeep
+/data/embeddings/*
+!/data/embeddings/.gitkeep
+/data/quarantine/*
+!/data/quarantine/.gitkeep
+/data/dead_letter/*
+!/data/dead_letter/.gitkeep
+/*.jsonl.gz
+/*.json.zip
+/*.parquet
+osv-all.zip
+nvdcve-*.json*
+
+
+# -----------------------------------------------------------------------------
+# 4. DATABASES, CACHES AND LOCAL SERVICES
+# -----------------------------------------------------------------------------
+pgdata/
+postgres-data/
+.docker-data/
+*.dump
+*.sql.gz
+dump.sql
+backup*.sql
+dump.rdb
+appendonly.aof
+*.sqlite
+*.sqlite3
+*.db
+langfuse-data/
+otel-data/
+/traces/
+
+
+# -----------------------------------------------------------------------------
+# 5. LLM TOOLING: CASSETTES, MODELS, FINE-TUNING
+# -----------------------------------------------------------------------------
+cassettes_raw/
+tests/cassettes/_raw/
+*.cassette.tmp
+.llm_cache/
+.gateway_cache/
+/models/
+*.safetensors
+*.gguf
+*.ggml
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.bin
+/finetune/outputs/
+/finetune/checkpoints/
+/finetune/adapters/
+/wandb/
+/mlruns/
+/.huggingface/
+/huggingface/
+/.sentence_transformers/
+/tensorboard/
+
+
+# -----------------------------------------------------------------------------
+# 6. EVALUATION AND RED TEAM OUTPUTS
+# -----------------------------------------------------------------------------
+/eval/runs/
+/eval/scratch/
+/eval/.cache/
+/eval/judge_raw/
+/attacks/scratch/
+/attacks/mutations_tmp/
+/redteam/scratch/
+/loadtest/results/
+*.hdr
+locust_stats*.csv
+
+
+# -----------------------------------------------------------------------------
+# 7. SANDBOX FOR WRITE TOOLS
+# -----------------------------------------------------------------------------
+# Local clone of the sandbox repo the triage-note tool posts to
+/sandbox-repo/
+/sandbox/
+# Canary-token files generated at runtime
+canary_tokens.local.*
+
+
+# -----------------------------------------------------------------------------
+# 8. SECURITY SCAN AND SUPPLY-CHAIN REPORTS (generated in CI or locally)
+# -----------------------------------------------------------------------------
+*.sarif
+sbom*.json
+sbom*.xml
+*.spdx.json
+*.cdx.json
+trivy-report*
+trivy-results*
+bandit-report*
+semgrep-report*
+pip-audit-report*
+gitleaks-report*
+.semgrep/
+.trivycache/
+
+
+# -----------------------------------------------------------------------------
+# 9. FRONTEND (interface, /scoreboard, /gallery)
+# -----------------------------------------------------------------------------
+node_modules/
+.pnpm-store/
+.yarn/cache/
+.yarn/install-state.gz
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+/frontend/dist/
+/frontend/build/
+/frontend/.next/
+/frontend/.vite/
+/frontend/.svelte-kit/
+/frontend/.turbo/
+/frontend/coverage/
+*.tsbuildinfo
+.eslintcache
+.parcel-cache/
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+
+
+# -----------------------------------------------------------------------------
+# 10. DOCKER AND DEPLOY
+# -----------------------------------------------------------------------------
+# Generated deploy artifacts and local build output
+*.tar
+*.tar.gz
+docker-build-cache/
+.buildx-cache/
+# Platform CLI state (Fly, Railway, Render, etc.)
+.fly/
+.railway/
+.render/
+.vercel/
+.terraform/
+*.tfstate
+*.tfstate.*
+
+
+# -----------------------------------------------------------------------------
+# 11. LOGS AND TEMP FILES
+# -----------------------------------------------------------------------------
+*.log
+/logs/
+/tmp/
+/temp/
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+.pid
+*.pid
+
+
+# -----------------------------------------------------------------------------
+# 12. EDITORS AND OPERATING SYSTEMS
+# -----------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.fleet/
+.history/
+*.code-workspace
+
+# Small hand-made fixtures must survive broad patterns like *.db or *.bin
+!/tests/fixtures/**
