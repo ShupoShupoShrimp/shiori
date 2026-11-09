@@ -18,15 +18,25 @@ COPY src/ ./src/
 
 RUN uv sync --frozen --no-cache
 
+
 # ========= BUILDER PHASE =========
 FROM ${PYTHON} AS final
 
 WORKDIR /app
 
-COPY --from=builder /app/.venv /app/.venv
+ARG UID=10001
+ARG GID=10001
 
+RUN groupadd -g ${GID} -r sea_group && \
+useradd -u ${UID} -g sea_group -r -s /sbin/nologin sea_user
+
+COPY --from=builder /app/.venv /app/.venv
 COPY src/ ./src/
 
+RUN chown -R ${UID}:${GID} /app
+
 ENV PATH="/app/.venv/bin:$PATH"
+
+USER ${UID}
 
 CMD ["python", "-m", "shiori"]
