@@ -39,4 +39,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 USER ${UID}
 
-CMD ["python", "-m", "shiori"]
+CMD ["uvicorn", "shiori.api.main:app", "--reload", "--host", "0.0.0.0" ,"--port", "8000"]
