@@ -29,3 +29,151 @@ dev = [
     "respx>=0.23.1",
     "ruff>=0.17.4",
 ]
+
+# Ruff Configuration
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "."]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
+[tool.ruff.lint]
+select = [
+    # Core rules
+    "E", "W",
+    "F",
+    "I",
+    "N",
+    "UP",
+    "B",
+    "A",
+    "C4",
+    "C90",
+    "SIM",
+    "RET",
+    "PIE",
+    "RSE",
+    "ISC",
+    "PERF",
+    "FURB",
+    "RUF",
+    "PL",
+    "TRY",
+    "ERA",
+    "ARG",
+    "SLF",
+    "PT",
+    "PTH",
+    "T20",
+    "INP",
+    "T10",
+    "ANN401",
+
+    # Project-specific rules
+    "S",
+    "ASYNC",
+    "FAST",
+    "DTZ",
+    "LOG", "G",
+    "TID",
+]
+ignore = [
+    "TRY003",
+    "PLR0913",
+    "ISC001",
+]
+unfixable = ["ERA001", "F841"]
+allowed-confusables = ["−", "–", "’", "×"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/shiori/api/**" = ["TID251"]
+"tests/**" = [
+    "TID251",
+    "S101",
+    "S105", "S106", "S311",
+    "PLR2004",
+    "ARG",
+    "SLF001",
+    "INP001",
+]
+"evals/**" = ["INP001", "T201", "PLR2004", "S311"]
+"scripts/**" = ["INP001", "T201"]
+"migrations/**" = ["INP001", "E501", "N999"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+# Banned API architecture boundaries
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"fastapi".msg = "FastAPI belongs in shiori/api only. core/, db/ and sources/ stay framework-free."
+"starlette".msg = "Starlette belongs in shiori/api only. core/, db/ and sources/ stay framework-free."
+"anthropic".msg = "Every model call goes through the gateway. Only gateway adapters may import provider SDKs (noqa: TID251)."
+"openai".msg = "Every model call goes through the gateway. Only gateway adapters may import provider SDKs (noqa: TID251)."
+"requests".msg = "Blocking HTTP in an async service. Use httpx.AsyncClient."
+"pkg_resources".msg = "Use packaging.version (PEP 440) for version math."
+
+[tool.ruff.lint.isort]
+known-first-party = ["shiori", "evals"]
+combine-as-imports = true
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-args = 7
+max-branches = 12
+max-returns = 6
+max-statements = 50
+
+
+# Mypy Configuration
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["pydantic.mypy"]
+
+# Layout & Targets
+mypy_path = "src"
+explicit_package_bases = true
+files = ["src"]
+exclude = ["^migrations/versions/"]
+
+# Strictness & Rules
+strict = true
+warn_unreachable = true
+warn_unused_configs = true
+enable_error_code = [
+    "ignore-without-code",
+    "redundant-expr",
+    "truthy-bool",
+    "truthy-iterable",
+    "possibly-undefined",
+    "unused-awaitable",
+    "mutable-override",
+    "redundant-self",
+    "deprecated",
+    "exhaustive-match",
+]
+
+# Output
+show_error_codes = true
+show_error_code_links = true
+pretty = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+# Overrides
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false

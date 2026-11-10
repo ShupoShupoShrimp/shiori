@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from shiori!")
+# Shiori is currently under development. Patience, human.
