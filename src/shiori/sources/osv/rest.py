@@ -6,19 +6,20 @@ OSV_VULNS_URL = "https://api.osv.dev/v1/vulns"
 OSV_QUERY_URL = "https://api.osv.dev/v1/query"
 
 
-async def advisory_search(vuln_id: str) -> OSVAdvisory:
+class OSVClient:
+    def __init__(self, client: httpx.AsyncClient):
+        self.client = client
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get(f"{OSV_VULNS_URL}/{vuln_id}")
+    async def advisory_search(self, vuln_id: str) -> OSVAdvisory:
+
+        response = await self.client.get(f"{OSV_VULNS_URL}/{vuln_id}")
 
         response.raise_for_status()
         return OSVAdvisory.model_validate(response.json())
 
+    async def commit_query_search(self, commit: str) -> OSVQueryResponse:
 
-async def commit_query_search(commit: str) -> OSVQueryResponse:
-
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
+        response = await self.client.post(
             url=OSV_QUERY_URL,
             json={"commit": commit},
         )
@@ -26,10 +27,8 @@ async def commit_query_search(commit: str) -> OSVQueryResponse:
         response.raise_for_status()
         return OSVQueryResponse.model_validate(response.json())
 
-
-async def package_query_search(name: str, ecosystem: str, version: str) -> OSVQueryResponse:
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
+    async def package_query_search(self, name: str, ecosystem: str, version: str) -> OSVQueryResponse:
+        response = await self.client.post(
             url=OSV_QUERY_URL,
             json={
                 "package": {
@@ -42,6 +41,3 @@ async def package_query_search(name: str, ecosystem: str, version: str) -> OSVQu
 
         response.raise_for_status()
         return OSVQueryResponse.model_validate(response.json())
-
-
-# Still making some hypothesis.
