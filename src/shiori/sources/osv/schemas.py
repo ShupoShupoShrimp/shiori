@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict
 
 # ------------------------------------------------------------------------------
@@ -9,6 +11,7 @@ class OSVEvents(BaseModel):
     introduced: str | None = None
     fixed: str | None = None
     last_affected: str | None = None
+    limit: str | None = None
 
     model_config = ConfigDict(extra="ignore")
 
@@ -17,25 +20,22 @@ class OSVRange(BaseModel):
     type: str
     repo: str | None = None
     events: list[OSVEvents] = []
+    database_specific: dict[str, Any] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
 class OSVPackage(BaseModel):
-    name: str
     ecosystem: str
+    name: str
     purl: str | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
-class OSVEcosystemSpecific(BaseModel):
-    severity: str | None = None
-
-    model_config = ConfigDict(extra="ignore")
-
-
-class OSVDatabaseSpecific(BaseModel):
+class OSVSeverity(BaseModel):
+    type: str | None = None
+    score: str | None = None
     source: str | None = None
 
     model_config = ConfigDict(extra="ignore")
@@ -43,10 +43,11 @@ class OSVDatabaseSpecific(BaseModel):
 
 class OSVRangeAffected(BaseModel):
     package: OSVPackage | None = None
+    severity: list[OSVSeverity] = []
     ranges: list[OSVRange] = []
     versions: list[str] = []
-    ecosystem_specific: OSVEcosystemSpecific | None = None
-    database_specific: OSVDatabaseSpecific | None = None
+    ecosystem_specific: dict[str, Any] | None = None
+    database_specific: dict[str, Any] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
@@ -54,6 +55,14 @@ class OSVRangeAffected(BaseModel):
 class OSVReferences(BaseModel):
     type: str
     url: str
+
+    model_config = ConfigDict(extra="ignore")
+
+
+class OSVCredits(BaseModel):
+    name: str
+    contact: list[str] = []
+    type: str | None = None
 
     model_config = ConfigDict(extra="ignore")
 
@@ -66,14 +75,21 @@ class OSVReferences(BaseModel):
 
 
 class OSVAdvisory(BaseModel):
+    schema_version: str | None = None
     id: str
+    modified: str
+    published: str | None = None
+    withdrawn: str | None = None
+    aliases: list[str] = []
+    upstream: list[str] = []
+    related: list[str] = []
     summary: str | None = None
     details: str | None = None
-    modified: str | None = None
-    published: str | None = None
+    severity: list[OSVSeverity] = []
+    affected: list[OSVRangeAffected] = []
     references: list[OSVReferences] = []
-    affected: list[OSVRangeAffected] | None = None
-    schema_version: str | None = None
+    credits: list[OSVCredits] = []
+    database_specific: dict[str, Any] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
