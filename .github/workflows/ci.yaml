@@ -17,7 +17,7 @@ jobs:
             - name: Installing uv
               uses: astral-sh/setup-uv@v5
               with:
-                  enable-caches: true
+                  enable-cache: true
                   cache-dependency-glob: |
                       **/uv.lock
                   python-version: "3.12"
@@ -33,3 +33,27 @@ jobs:
 
             - name: Running mypy strict
               run: uv run mypy . --strict
+
+    security:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Getting the repository data
+              uses: actions/checkout@v4
+
+            - name: Installing uv
+              uses: astral-sh/setup-uv@v5
+              with:
+                  enable-cache: true
+                  cache-dependency-glob: |
+                      **/uv.lock
+                  python-version: "3.12"
+
+            - name: Copying dependencies
+              run: uv sync --locked
+
+            - name: Running Bandit
+              run: uv run bandit -r src/
+
+            - name: Running pip-audit
+              run: uv run pip-audit
