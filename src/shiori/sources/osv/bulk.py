@@ -3,7 +3,6 @@ import logging
 import zipfile
 
 import httpx
-from pydantic import ValidationError
 
 from shiori.sources.osv.schemas import OSVAdvisory
 
@@ -16,7 +15,7 @@ class OSVBulkDownloader:
     def __init__(self, client: httpx.AsyncClient) -> None:
         self.client = client
 
-    async def fetch_and_parse(self, url: str = PYPI_BULK_URL) -> list[OSVAdvisory]:
+    async def fetch_raw_advisories(self, url: str = PYPI_BULK_URL) -> list[OSVAdvisory]:
         response = await self.client.get(url)
         response.raise_for_status()
 
@@ -29,7 +28,7 @@ class OSVBulkDownloader:
                     try:
                         advisory = OSVAdvisory.model_validate_json(raw_byte)
                         advisories.append(advisory)
-                    except (ValidationError, Exception) as e:
+                    except Exception as e:
                         sea_log.warning(f"skipping malformed file {filename} due to error: {e}")
                         continue
 
