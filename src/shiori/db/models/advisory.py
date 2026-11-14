@@ -1,13 +1,13 @@
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import JSON, DateTime, ForeignKey, String, UniqueConstraint, func
+from sqlalchemy import JSON, DateTime, ForeignKey, String, UniqueConstraint, func, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from shiori.db.base import Base
+from dataclasses import dataclass
 
-
-class Advisory(Base):
+class AdvisoryDB(Base):
     __tablename__ = "advisories"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -42,6 +42,29 @@ class Advisory(Base):
 
     __table_args__ = (UniqueConstraint("source_name", "advisory_id"),)
 
+
+@dataclass
+class IncomingAdvisory:
+    source_name: str
+    advisory_id: str
+    modified: datetime | None
+    published: datetime | None
+    withdrawn: datetime | None
+    raw_payload: dict[str, Any]
+    data: Any
+
+@dataclass
+class AdvisoryIngestionResult:
+    processed: int = 0
+    new: int = 0
+    unchanged: int = 0
+    modified: int = 0
+    failed: int = 0
+
+class IngestionAction(str, Enum):
+    NEW = "NEW"
+    UNCHANGED = "UNCHANGED"
+    MODIFIED = "MODIFIED"
 
 class OSVAdvisory(Base):
     __tablename__ = "osv_advisories"
